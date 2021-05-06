@@ -17,9 +17,26 @@ class LinkedList():
             self._size = 1
         else:
             self.current_node.next_node = new_node
+            new_node.prev_node = self.current_node
             self.current_node = self.current_node.next_node
             self._size += 1
     
+    def add_front_node(self, new_node):
+        """Adds a node to the beginning of the list"""
+        if self.head_node == None:
+            self.head_node = new_node
+            self.current_node = self.head_node
+            self.size = 1
+        else:
+            new_node.next_node = self.head_node
+            self.head_node.prev_node = new_node
+            self.head_node = new_node
+            self._size += 1
+
+    def add_front(self, value):
+        """creates a node with value and adds it to the front of the list"""
+        self.add_front_node(Node(value))
+
     def append(self, value):
         """creates a node with value and appends it to the list"""
         self.append_node(Node(value))
@@ -54,23 +71,38 @@ class LinkedList():
             print('index can\'t be negative')
             return False
         elif index == 0:
-            del_node = self.head_node
+            return_value = self.head_node.value
             self.head_node = self.head_node.next_node
-            del_node.next_node = None
-            return del_node.value
+            self.head_node.prev_node.next_node = None
+            self.head_node.prev_node = None
+            return return_value
+        else:
+            temp_node = self.head_node.next_node
 
-        prev_node = self.head_node
-        temp_node = prev_node.next_node
+            i = 1
+            while i < index:
+                temp_node = temp_node.next_node
+                i += 1
 
-        i = 1
-        while i < index:
-            prev_node = temp_node
-            temp_node = temp_node.next_node
-            i += 1
-        
-        prev_node.next_node = temp_node.next_node
-        temp_node.next_node = None
-        return temp_node.value
+            return_value = temp_node.value
+            temp_node.prev_node.next_node = temp_node.next_node
+            temp_node.next_node.prev_node = temp_node.prev_node
+            temp_node.next_node = None
+            temp_node.prev_node = None
+
+            return return_value
+
+    #deque functionality
+    def pop(self):
+        temp_value = self.current_node.value
+
+        self.current_node.prev_node.next_node = None
+        self.current_node = self.current_node.prev_node
+
+        return temp_value
+
+    def peek(self):
+        return self.current_node.value
 
     def __str__(self):
         """Returns all values of the list as a string"""
@@ -82,6 +114,22 @@ class LinkedList():
             temp_node = temp_node.next_node
         
         return solution
+
+    def str_reverse(self):
+        """Returns a string that is the values from the list in reverse"""
+        temp_node = self.head_node
+        while temp_node.next_node != None:
+            temp_node = temp_node.next_node
+        
+        solution = ""
+        while temp_node != None:
+            
+            solution += " " + str(temp_node.value)
+            temp_node = temp_node.prev_node
+        
+        return solution
+        
+        
         
 
         
